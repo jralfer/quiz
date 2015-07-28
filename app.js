@@ -13,6 +13,9 @@ var session = require('express-session');
 
 var routes = require('./routes/index');
 
+var timeLastRequest = 0;
+var TIME_OUT_SESSION_LOGIN = 120000 // En milisegundos
+
 var app = express();
 
 // view engine setup
@@ -31,6 +34,23 @@ app.use(cookieParser('quiz2015'));
 app.use(session());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
+
+
+// Control de tiempo de inactividad para usuarios en sesión
+app.use(function(req, res, next) {
+
+    if(req.session.user) {
+        if (timeLastRequest > 0 && (new Date().getTime() - timeLastRequest) > TIME_OUT_SESSION_LOGIN) {
+            req.session.user = null;
+            timeLastRequest = 0;
+        }
+        else {
+            timeLastRequest = (new Date().getTime());
+        }
+    }
+    next();
+});
+
 
 // Helpers dinamicos:
 app.use(function(req, res, next) {
