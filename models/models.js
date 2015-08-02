@@ -45,6 +45,8 @@ Quiz.hasMany(Comment); // una pregunta puede tener varios comentarios
 exports.Quiz = Quiz;
 exports.Comment = Comment;
 
+exports.sequelize = sequelize;
+
 
 // sequelize.sync() crea e inicializa tabla de preguntas en DB
 sequelize.sync().then(function () {
@@ -65,4 +67,7 @@ sequelize.sync().then(function () {
         }
     });
 });
+
+
+var chain = new Sequelize.Utils.QueryChainer();
 
